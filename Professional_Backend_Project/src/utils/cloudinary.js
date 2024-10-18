@@ -22,4 +22,4 @@ const fileUpload = async (fileLocalStorage) => {
   }
 };
 
-export { fileUpload };
+export { uploadonCloudinary };

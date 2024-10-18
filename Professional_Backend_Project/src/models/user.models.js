@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 const userSchema = new Schema(
   {
-    username: {
+    userName: {
       type: String,
       required: true,
       lowercase: true,
@@ -19,7 +19,7 @@ const userSchema = new Schema(
       unique: true,
       trime: true,
     },
-    fullname: {
+    fullName: {
       type: String,
       required: true,
       index: true,
@@ -29,10 +29,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    avatar: {
+    coverImage: {
       type: String,
     },
-    watchhistory: [
+    watchHistory: [
       {
         type: Schema.Types.ObjectId,
         ref: Video,
@@ -51,7 +51,7 @@ const userSchema = new Schema(
 
 userSchema.pre("save", async function (next) {
   if (!this.password.isModified("password")) return next();
-  this.password = bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
