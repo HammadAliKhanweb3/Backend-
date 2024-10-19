@@ -3,20 +3,20 @@ import { log } from "console";
 import fs, { unlink, unlinkSync } from "fs";
 
 cloudinary.config({
-  cloud_name: dl2uqf25z,
-  api_key: 267356223564734,
-  api_secret: Q7fdk7oCyRvIVl2bRVbFw6Vg75I,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-const fileUpload = async (fileLocalStorage) => {
+const uploadonCloudinary = async (fileLocalStorage) => {
   try {
     if (!fileLocalStorage) return null;
     const response = await cloudinary.uploader.upload(fileLocalStorage, {
-      resource_type: auto,
+      resource_type: "auto",
     });
     console.log("File Successfully uploaded on Cloudinary", response.url);
     return response;
   } catch (error) {
-    unlinkSync(fileLocalStorage);
+    fs.unlinkSync(fileLocalStorage);
     console.log(error);
     return null;
   }

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
+import { Video } from "./video.models.js";
+import bcrypt from "bcryptjs";
 const userSchema = new Schema(
   {
     userName: {
@@ -10,20 +10,20 @@ const userSchema = new Schema(
       lowercase: true,
       unique: true,
       index: true,
-      trime: true,
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       lowercase: true,
       unique: true,
-      trime: true,
+      trim: true,
     },
     fullName: {
       type: String,
       required: true,
       index: true,
-      trime: true,
+      trim: true,
     },
     avatar: {
       type: String,
@@ -35,7 +35,7 @@ const userSchema = new Schema(
     watchHistory: [
       {
         type: Schema.Types.ObjectId,
-        ref: Video,
+        ref: "Video",
       },
     ],
     password: {
@@ -43,45 +43,37 @@ const userSchema = new Schema(
       required: [true, "Password is required"],
     },
     refreshToken: {
-      type: true,
+      type: String,
     },
   },
   { timestamps: true }
 );
 
 userSchema.pre("save", async function (next) {
-  if (!this.password.isModified("password")) return next();
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-userSchema.models.isPasswordCorrect = async function (password) {
+userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-userSchema.models.generateAccessToken = function () {
-  jwt.sign({
-    _id: this.id,
-    emial: this.email,
-    username: this.username,
-    fullName: this.fullName,
-  });
-};
-userSchema.models.generateAccessToken = function () {
+userSchema.methods.generateAccessToken = function () {
   jwt.sign(
     {
       _id: this._id,
       email: this.email,
-      username: this.username,
+      username: this.userName,
       fullName: this.fullName,
     },
-    process.env.ACCCESS_TOKEN_SECRET,
+    process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: process.env.ACCCESS_TOKEN_EXPIRY,
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
   );
 };
-userSchema.models.generateAccessToken = function () {
+userSchema.methods.generateRefreshToken = function () {
   jwt.sign(
     {
       _id: this._id,
