@@ -22,4 +22,17 @@ const uploadonCloudinary = async (fileLocalStorage) => {
   }
 };
 
-export { uploadonCloudinary };
+const deleteOnCloudinary = async (fileLocalStorage) => {
+  try {
+    if (!fileLocalStorage) return null;
+    const response = await cloudinary.uploader.destroy(fileLocalStorage, {
+      resource_type: "auto",
+    });
+    console.log("File Deleted Successfully ", response.url);
+    return response;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+export { uploadonCloudinary,deleteOnCloudinary };
