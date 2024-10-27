@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
-export const verifyJwt = asyncHandler(async (req, res, next) => {
+export const verifyJwt = asyncHandler(async (req, _, next) => {
   try {
     const token =
       req.cookies?.accessToken ||
@@ -17,7 +17,6 @@ export const verifyJwt = asyncHandler(async (req, res, next) => {
 
     if (!user) throw new ApiError(400, "Invalid Access Token");
     req.user = user;
-
     next();
   } catch (error) {
     throw new ApiError(401, error?.message || "Invalid access Token");
